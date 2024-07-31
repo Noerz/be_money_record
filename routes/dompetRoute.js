@@ -1,15 +1,21 @@
 const express = require("express");
 const router = express.Router();
-const { createDompet, getAllDompet, getDompetById, updateDompet, deleteDompet } = require("../controller/dompetController");
+const {
+  createDompet,
+  getDompet,
+  getDompetByIdUser,
+  updateDompet,
+  deleteDompet,
+} = require("../controller/dompetController");
+const { verifyToken } = require("../middleware/VerifyAuth");
 
 const dompetRoutes = (router) => {
-    router.post("/dompet", createDompet);
-    router.get("/dompet", getAllDompet);
-    router.get("/dompet/:idDompet", getDompetById);
-    router.put("/dompet/:idDompet", updateDompet);
-    router.delete("/dompet/:idDompet", deleteDompet);
+  router.post("/dompet",verifyToken, createDompet);
+  router.get("/dompet",verifyToken, getDompet);
+  router.get("/dompet/user",verifyToken, getDompetByIdUser);
+  router.put("/dompet",verifyToken, updateDompet);
 
-}
+  router.delete("/dompet/:idDompet", deleteDompet);
+};
 
-
-module.exports={dompetRoutes}
+module.exports = { dompetRoutes };

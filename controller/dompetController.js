@@ -12,95 +12,119 @@ const createDompet = async (req, res) => {
       saldo,
       idUser,
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     });
     res.status(201).json({
       code: 201,
-      status: 'success',
+      status: "success",
       message: "Dompet created successfully",
-      data: newDompet
+      data: newDompet,
     });
   } catch (error) {
     res.status(500).json({
       code: 500,
-      status: 'error',
-      message: error.message
+      status: "error",
+      message: error.message,
+      data: null,
     });
   }
 };
 
 // READ: Mendapatkan semua dompet
-const getAllDompet = async (req, res) => {
+const getDompet = async (req, res) => {
   try {
-    const allDompet = await models.dompet.findAll();
-    res.status(200).json({
-      code: 200,
-      status: 'success',
-      message: "All dompets retrieved successfully",
-      data: allDompet
-    });
-  } catch (error) {
-    res.status(500).json({
-      code: 500,
-      status: 'error',
-      message: error.message
-    });
-  }
-};
+    const { id } = req.query;
+    const whereCondition = {};
 
-// READ: Mendapatkan satu dompet berdasarkan idDompet
-const getDompetById = async (req, res) => {
-  try {
-    const { idDompet } = req.params;
-    const dompet = await models.dompet.findOne({ where: { idDompet } });
-    if (!dompet) {
+    if (id) {
+      whereCondition.idDompet = id;
+    }
+    const response = await models.dompet.findAll({ where: whereCondition });
+    if (response.length === 0) {
       return res.status(404).json({
         code: 404,
-        status: 'error',
-        message: "Dompet not found"
+        status: "error",
+        message: "Dompet tidak ditemukan",
+        data: null,
       });
     }
     res.status(200).json({
       code: 200,
-      status: 'success',
-      message: "Dompet retrieved successfully",
-      data: dompet
+      status: "success",
+      message: "All dompets retrieved successfully",
+      data: response,
     });
   } catch (error) {
     res.status(500).json({
       code: 500,
-      status: 'error',
-      message: error.message
+      status: "error",
+      message: error.message,
+      data: null,
+    });
+  }
+};
+
+// READ: Mendapatkan dompet berdasarkan idUser
+const getDompetByIdUser = async (req, res) => {
+  try {
+    const { idUser } = req.query;
+    if (!idUser) {
+      return res.status(400).json({
+        code: 400,
+        status: "error",
+        message: "idUser is required",
+        data: null,
+      });
+    }
+
+    const response = await models.dompet.findAll({ where: { idUser } });
+    if (response.length === 0) {
+      return res.status(404).json({
+        code: 404,
+        status: "error",
+        message: "Dompet tidak ditemukan",
+        data: null,
+      });
+    }
+    res.status(200).json({
+      code: 200,
+      status: "success",
+      message: "Dompets retrieved successfully",
+      data: response,
+    });
+  } catch (error) {
+    res.status(500).json({
+      code: 500,
+      status: "error",
+      message: error.message,
+      data: null,
     });
   }
 };
 
 // UPDATE: Mengubah dompet berdasarkan idDompet
 const updateDompet = async (req, res) => {
+  const dompet = await models.dompet.findOne({ where: { idDompet: req.query.id } });
+  if (!dompet) return res.status(404).json({ msg: "Dompet tidak ditemukan" });
+
+  const body = {
+    nama: req.body.nama,
+    target: req.body.target,
+    saldo: req.body.saldo,
+    updatedAt: new Date(),
+  };
   try {
-    const { idDompet } = req.params;
-    const { nama, target, saldo } = req.body;
-    const updatedDompet = await models.dompet.update(
-      { nama, target, saldo, updatedAt: new Date() },
-      { where: { idDompet } }
-    );
-    if (updatedDompet[0] === 0) {
-      return res.status(404).json({
-        code: 404,
-        status: 'error',
-        message: "Dompet not found"
-      });
-    }
+    await models.dompet.update(body, { where: { idDompet: req.query.id } });
     res.status(200).json({
       code: 200,
-      status: 'success',
-      message: "Dompet updated successfully"
+      status: "success",
+      message: "Dompet updated successfully",
     });
   } catch (error) {
     res.status(500).json({
       code: 500,
-      status: 'error',
-      message: error.message
+      status: "error",
+      message: error.message,
     });
   }
 };
@@ -113,22 +137,28 @@ const deleteDompet = async (req, res) => {
     if (!deletedDompet) {
       return res.status(404).json({
         code: 404,
-        status: 'error',
-        message: "Dompet not found"
+        status: "error",
+        message: "Dompet not found",
       });
     }
     res.status(200).json({
       code: 200,
-      status: 'success',
-      message: "Dompet deleted successfully"
+      status: "success",
+      message: "Dompet deleted successfully",
     });
   } catch (error) {
     res.status(500).json({
       code: 500,
-      status: 'error',
-      message: error.message
+      status: "error",
+      message: error.message,
     });
   }
 };
 
-module.exports = { createDompet, getAllDompet, getDompetById, updateDompet, deleteDompet };
+module.exports = {
+  createDompet,
+  getDompet,
+  getDompetByIdUser, // Export fungsi baru
+  updateDompet,
+  deleteDompet,
+};
