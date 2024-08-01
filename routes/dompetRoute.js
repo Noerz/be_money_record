@@ -7,7 +7,7 @@ const {
   updateDompet,
   deleteDompet,
 } = require("../controller/dompetController");
-const { verifyToken } = require("../middleware/VerifyAuth");
+const { verifyToken } = require("../middleware/verifyAuth");
 
 const dompetRoutes = (router) => {
   router.post("/dompet",verifyToken, createDompet);

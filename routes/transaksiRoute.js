@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { addSaldo, reduceSaldo,getAllTransaksi,getAllTransaksiByIdDompet } = require("../controller/transaksiController");
-const { verifyToken } = require("../middleware/VerifyAuth");
+const { verifyToken } = require("../middleware/verifyAuth");
 
 const transaksiRoutes = (router) => {
     router.get("/transaksi",verifyToken, getAllTransaksi);
