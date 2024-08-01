@@ -1,4 +1,4 @@
-const db = require("../config/Database");
+const db = require("../config/database");
 const initModels = require("../models/init-models");
 const models = initModels(db);
 
