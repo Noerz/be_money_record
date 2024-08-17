@@ -10,12 +10,12 @@ const {
 const { verifyToken } = require("../middleware/verifyAuth");
 
 const dompetRoutes = (router) => {
-  router.post("/dompet",verifyToken, createDompet);
-  router.get("/dompet",verifyToken, getDompet);
-  router.get("/dompet/user",verifyToken, getDompetByIdUser);
-  router.put("/dompet",verifyToken, updateDompet);
+  router.post("/dompet", verifyToken, createDompet);
+  router.get("/dompet", verifyToken, getDompet);
+  router.get("/dompet/user", verifyToken, getDompetByIdUser);
+  router.put("/dompet/:idDompet", verifyToken, updateDompet);
 
-  router.delete("/dompet/:idDompet", deleteDompet);
+  router.delete("/dompet", deleteDompet);
 };
 
 module.exports = { dompetRoutes };

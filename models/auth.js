@@ -1,31 +1,24 @@
 const Sequelize = require('sequelize');
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('dompet', {
-    idDompet: {
+  return sequelize.define('auth', {
+    idAuth: {
       autoIncrement: true,
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true
     },
-    nama: {
-      type: DataTypes.STRING(30),
-      allowNull: false
-    },
-    target: {
-      type: DataTypes.INTEGER,
-      allowNull: false
-    },
-    saldo: {
-      type: DataTypes.INTEGER,
-      allowNull: false
-    },
-    user_id: {
-      type: DataTypes.INTEGER,
+    email: {
+      type: DataTypes.STRING(60),
       allowNull: false,
-      references: {
-        model: 'user',
-        key: 'idUser'
-      }
+      unique: "email"
+    },
+    password: {
+      type: DataTypes.TEXT,
+      allowNull: false
+    },
+    role: {
+      type: DataTypes.ENUM('murid','guru'),
+      allowNull: false
     },
     createdAt: {
       type: DataTypes.DATE,
@@ -39,7 +32,7 @@ module.exports = function(sequelize, DataTypes) {
     }
   }, {
     sequelize,
-    tableName: 'dompet',
+    tableName: 'auth',
     timestamps: false,
     indexes: [
       {
@@ -47,14 +40,15 @@ module.exports = function(sequelize, DataTypes) {
         unique: true,
         using: "BTREE",
         fields: [
-          { name: "idDompet" },
+          { name: "idAuth" },
         ]
       },
       {
-        name: "idUser",
+        name: "email",
+        unique: true,
         using: "BTREE",
         fields: [
-          { name: "user_id" },
+          { name: "email" },
         ]
       },
     ]

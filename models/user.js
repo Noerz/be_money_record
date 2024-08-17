@@ -8,21 +8,32 @@ module.exports = function(sequelize, DataTypes) {
       primaryKey: true
     },
     fullName: {
-      type: DataTypes.STRING(45),
+      type: DataTypes.STRING(55),
       allowNull: false
     },
-    email: {
-      type: DataTypes.STRING(60),
+    adress: {
+      type: DataTypes.STRING(150),
+      allowNull: true
+    },
+    noHp: {
+      type: DataTypes.STRING(15),
+      allowNull: true
+    },
+    gender: {
+      type: DataTypes.ENUM('male','female'),
+      allowNull: true
+    },
+    image: {
+      type: DataTypes.STRING(225),
+      allowNull: true
+    },
+    auth_id: {
+      type: DataTypes.INTEGER,
       allowNull: false,
-      unique: "email"
-    },
-    password: {
-      type: DataTypes.TEXT,
-      allowNull: false
-    },
-    role: {
-      type: DataTypes.ENUM('murid','guru'),
-      allowNull: false
+      references: {
+        model: 'auth',
+        key: 'idAuth'
+      }
     },
     createdAt: {
       type: DataTypes.DATE,
@@ -31,8 +42,7 @@ module.exports = function(sequelize, DataTypes) {
     },
     updatedAt: {
       type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP')
+      allowNull: false
     }
   }, {
     sequelize,
@@ -48,11 +58,10 @@ module.exports = function(sequelize, DataTypes) {
         ]
       },
       {
-        name: "email",
-        unique: true,
+        name: "auth_id",
         using: "BTREE",
         fields: [
-          { name: "email" },
+          { name: "auth_id" },
         ]
       },
     ]

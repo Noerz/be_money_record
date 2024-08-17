@@ -5,12 +5,13 @@ const models = initModels(db);
 // CREATE: Menambahkan dompet baru
 const createDompet = async (req, res) => {
   try {
-    const { nama, target, saldo, idUser } = req.body;
+    const { nama, target, saldo } = req.body;
+    const { user_id } = req.decoded;
     const newDompet = await models.dompet.create({
       nama,
       target,
       saldo,
-      idUser,
+      user_id,
       createdAt: new Date(),
       updatedAt: new Date(),
     });
@@ -33,7 +34,7 @@ const createDompet = async (req, res) => {
 // READ: Mendapatkan semua dompet
 const getDompet = async (req, res) => {
   try {
-    const { id } = req.query;
+    const { id } = req.body;
     const whereCondition = {};
 
     if (id) {
@@ -67,8 +68,8 @@ const getDompet = async (req, res) => {
 // READ: Mendapatkan dompet berdasarkan idUser
 const getDompetByIdUser = async (req, res) => {
   try {
-    const { idUser } = req.query;
-    if (!idUser) {
+    const { user_id } = req.decoded;
+    if (!user_id) {
       return res.status(400).json({
         code: 400,
         status: "error",
@@ -77,7 +78,7 @@ const getDompetByIdUser = async (req, res) => {
       });
     }
 
-    const response = await models.dompet.findAll({ where: { idUser } });
+    const response = await models.dompet.findAll({ where: { user_id } });
     if (response.length === 0) {
       return res.status(404).json({
         code: 404,
@@ -104,7 +105,9 @@ const getDompetByIdUser = async (req, res) => {
 
 // UPDATE: Mengubah dompet berdasarkan idDompet
 const updateDompet = async (req, res) => {
-  const dompet = await models.dompet.findOne({ where: { idDompet: req.query.id } });
+  const dompet = await models.dompet.findOne({
+    where: { idDompet: req.query.id },
+  });
   if (!dompet) return res.status(404).json({ msg: "Dompet tidak ditemukan" });
 
   const body = {
@@ -132,7 +135,16 @@ const updateDompet = async (req, res) => {
 // DELETE: Menghapus dompet berdasarkan idDompet
 const deleteDompet = async (req, res) => {
   try {
-    const { idDompet } = req.params;
+    const { idDompet } = req.query;
+    if (!idDompet) {
+      return res.status(400).json({
+        code: 400,
+        status: "error",
+        message: "idDompet is required",
+        data: null,
+      });
+    }
+
     const deletedDompet = await models.dompet.destroy({ where: { idDompet } });
     if (!deletedDompet) {
       return res.status(404).json({
@@ -141,12 +153,14 @@ const deleteDompet = async (req, res) => {
         message: "Dompet not found",
       });
     }
+
     res.status(200).json({
       code: 200,
       status: "success",
       message: "Dompet deleted successfully",
     });
   } catch (error) {
+    console.error("Error deleting dompet:", error.message);
     res.status(500).json({
       code: 500,
       status: "error",

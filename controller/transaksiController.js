@@ -5,9 +5,9 @@ const models = initModels(db);
 // CREATE: Transaksi penambahan saldo
 const addSaldo = async (req, res) => {
   try {
-    const { idDompet, namaTransaksi, tanggal, jumlah, keterangan, idKategori } = req.body;
+    const { dompet_id, namaTransaksi, tanggal, jumlah, keterangan, idKategori } = req.body;
 
-    const dompet = await models.dompet.findOne({ where: { idDompet } });
+    const dompet = await models.dompet.findOne({ where: { idDompet:dompet_id } });
     if (!dompet) {
       console.log("Dompet not found");
       return res.status(404).json({
@@ -24,14 +24,14 @@ const addSaldo = async (req, res) => {
       jenis: 'pemasukan',
       keterangan,
       idKategori,
-      idDompet,
+      dompet_id,
       createdAt: new Date(),
       updatedAt: new Date()
     });
 
     await models.dompet.update(
       { saldo: dompet.saldo + jumlah, updatedAt: new Date() },
-      { where: { idDompet } }
+      { where: { idDompet:dompet_id } }
     );
 
     console.log("Saldo added successfully");
@@ -140,7 +140,7 @@ const getAllTransaksi = async (req, res) => {
   }
 };
 
-// READ: Mendapatkan semua transaksi berdasarkan idDompet
+// READ: Mendapatkan semua transaksi berdasarkan dompet_id
 const getAllTransaksiByIdDompet = async (req, res) => {
   try {
     const { idDompet } = req.query;
@@ -157,8 +157,9 @@ const getAllTransaksiByIdDompet = async (req, res) => {
     const page = parseInt(req.query.page) || 1; // default page
     const offset = (page - 1) * limit;
 
+    // Use the correct column name in the where clause
     const { count, rows } = await models.transaksi.findAndCountAll({
-      where: { idDompet },
+      where: { dompet_id: idDompet },  // Assuming the correct column name is dompet_id
       limit,
       offset,
     });
@@ -185,5 +186,6 @@ const getAllTransaksiByIdDompet = async (req, res) => {
     });
   }
 };
+
 
 module.exports = { addSaldo, reduceSaldo, getAllTransaksi, getAllTransaksiByIdDompet };

@@ -27,7 +27,7 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.STRING(50),
       allowNull: false
     },
-    idDompet: {
+    dompet_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
@@ -70,7 +70,7 @@ module.exports = function(sequelize, DataTypes) {
         name: "idDompet",
         using: "BTREE",
         fields: [
-          { name: "idDompet" },
+          { name: "dompet_id" },
         ]
       },
       {
@@ -78,6 +78,13 @@ module.exports = function(sequelize, DataTypes) {
         using: "BTREE",
         fields: [
           { name: "idKategori" },
+        ]
+      },
+      {
+        name: "dompet_id",
+        using: "BTREE",
+        fields: [
+          { name: "dompet_id" },
         ]
       },
     ]
