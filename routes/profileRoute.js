@@ -2,16 +2,24 @@ const express = require("express");
 const router = express.Router();
 const {
   getProfile,
+  getProfilePicture,
   updateProfile,
+  changePassword,
+  updateProfilePicture,
 } = require("../controller/profileController");
-const { verifyToken } = require("../middleware/verifyAuth");
+const { verifyToken, upload } = require("../middleware/verifyAuth");
 
 const profileRoutes = (router) => {
   router.get("/profile", verifyToken, getProfile);
-  //   router.get("/dompet",verifyToken, getDompet);
-  //   router.get("/dompet/user",verifyToken, getDompetByIdUser);
+  router.get("/profile/picture", verifyToken, getProfilePicture);
   router.put("/profile", verifyToken, updateProfile);
-  //   router.delete("/dompet/:idDompet", deleteDompet);
+  router.put("/profile/change-password", verifyToken, changePassword);
+  router.put(
+    "/profile/change-picture",
+    upload.single("image"),
+    verifyToken,
+    updateProfilePicture
+  );
 };
 
 module.exports = { profileRoutes };
