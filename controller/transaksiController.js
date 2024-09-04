@@ -7,7 +7,7 @@ const addSaldo = async (req, res) => {
   try {
     const { dompet_id, namaTransaksi, tanggal, jumlah, keterangan, idKategori } = req.body;
 
-    const dompet = await models.dompet.findOne({ where: { idDompet:dompet_id } });
+    const dompet = await models.dompet.findOne({ where: { idDompet: dompet_id } });
     if (!dompet) {
       console.log("Dompet not found");
       return res.status(404).json({
@@ -31,7 +31,7 @@ const addSaldo = async (req, res) => {
 
     await models.dompet.update(
       { saldo: dompet.saldo + jumlah, updatedAt: new Date() },
-      { where: { idDompet:dompet_id } }
+      { where: { idDompet: dompet_id } }
     );
 
     console.log("Saldo added successfully");
@@ -52,11 +52,12 @@ const addSaldo = async (req, res) => {
   }
 };
 
+// CREATE: Transaksi pengurangan saldo
 const reduceSaldo = async (req, res) => {
   try {
     const { dompet_id, namaTransaksi, tanggal, jumlah, keterangan, idKategori } = req.body;
 
-    const dompet = await models.dompet.findOne({ where: { idDompet:dompet_id } });
+    const dompet = await models.dompet.findOne({ where: { idDompet: dompet_id } });
     if (!dompet) {
       console.log("Dompet not found");
       return res.status(404).json({
@@ -81,13 +82,14 @@ const reduceSaldo = async (req, res) => {
       jenis: 'pengeluaran',
       keterangan,
       idKategori,
-      idDompet,
+      dompet_id,
       createdAt: new Date(),
       updatedAt: new Date()
     });
+
     await models.dompet.update(
       { saldo: dompet.saldo - jumlah, updatedAt: new Date() },
-      { where: { idDompet:dompet_id } }
+      { where: { idDompet: dompet_id } }
     );
 
     res.status(201).json({
@@ -157,7 +159,6 @@ const getAllTransaksiByIdDompet = async (req, res) => {
     const page = parseInt(req.query.page) || 1; // default page
     const offset = (page - 1) * limit;
 
-    // Use the correct column name in the where clause
     const { count, rows } = await models.transaksi.findAndCountAll({
       where: { dompet_id: idDompet },  // Assuming the correct column name is dompet_id
       limit,
@@ -186,6 +187,5 @@ const getAllTransaksiByIdDompet = async (req, res) => {
     });
   }
 };
-
 
 module.exports = { addSaldo, reduceSaldo, getAllTransaksi, getAllTransaksiByIdDompet };

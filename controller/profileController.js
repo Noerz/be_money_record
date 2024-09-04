@@ -8,7 +8,7 @@ const path = require("path");
 const getProfile = async (req, res) => {
   try {
     const { user_id } = req.decoded;
-    const response = await models.user.findAll({
+    const response = await models.user.findOne  ({
       where: {
         idUser: user_id,
       },
