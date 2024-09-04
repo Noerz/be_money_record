@@ -54,10 +54,11 @@ const addSaldo = async (req, res) => {
 
 const reduceSaldo = async (req, res) => {
   try {
-    const { idDompet, namaTransaksi, tanggal, jumlah, keterangan, idKategori } = req.body;
+    const { dompet_id, namaTransaksi, tanggal, jumlah, keterangan, idKategori } = req.body;
 
-    const dompet = await models.dompet.findOne({ where: { idDompet } });
+    const dompet = await models.dompet.findOne({ where: { idDompet:dompet_id } });
     if (!dompet) {
+      console.log("Dompet not found");
       return res.status(404).json({
         code: 404,
         status: 'error',
@@ -84,10 +85,9 @@ const reduceSaldo = async (req, res) => {
       createdAt: new Date(),
       updatedAt: new Date()
     });
-
     await models.dompet.update(
       { saldo: dompet.saldo - jumlah, updatedAt: new Date() },
-      { where: { idDompet } }
+      { where: { idDompet:dompet_id } }
     );
 
     res.status(201).json({
