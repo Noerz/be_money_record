@@ -68,10 +68,8 @@ const fileFilter = (req, file, cb) => {
 // Initialize upload
 const upload = multer({
   storage: storage,
-  limits: { fileSize: 1000000 }, // 1MB file size limit
-  fileFilter: fileFilter,
+  limits: { fileSize: 2000000 }, // 1MB file size limit
+  
 });
-
-module.exports = upload;
 
 module.exports = { verifyToken, isAdmin, upload };

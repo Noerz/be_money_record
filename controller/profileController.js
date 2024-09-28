@@ -4,17 +4,18 @@ const models = initModels(db);
 const bcrypt = require("bcrypt");
 const fs = require("fs");
 const path = require("path");
+require("dotenv").config();
 
 const getProfile = async (req, res) => {
   try {
     const { user_id } = req.decoded;
-    const response = await models.user.findOne  ({
+    const response = await models.user.findOne({
       where: {
         idUser: user_id,
       },
     });
 
-    if (response.length === 0) {
+    if (!response) { // Perbaiki pemeriksaan untuk response
       return res.status(404).json({
         code: 404,
         status: "error",
@@ -22,6 +23,14 @@ const getProfile = async (req, res) => {
         data: null,
       });
     }
+
+     // Buat URL gambar jika ada
+     const baseUrl = `${req.protocol}://${req.get('host')}`; // Mendapatkan protocol dan host
+     if (response.image) {
+       response.image = `${baseUrl}/api/v1/uploads/${response.image}`; // Menambahkan URL gambar
+     }
+ 
+
     res.status(200).json({
       code: 200,
       status: "success",
@@ -32,6 +41,7 @@ const getProfile = async (req, res) => {
     res.status(500).json({ msg: error.message });
   }
 };
+
 
 const updateProfile = async (req, res) => {
   try {
@@ -130,7 +140,7 @@ const getProfilePicture = async (req, res) => {
     if (!fs.existsSync(filePath)) {
       return res.status(404).json({ msg: "File not found" });
     }
-
+    console.log(filePath);
     res.sendFile(filePath);
   } catch (error) {
     res.status(500).json({ msg: error.message });

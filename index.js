@@ -9,7 +9,8 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(helmet({ xPoweredBy: false }));
-app.use(express.static("public"));
+app.use(express.static("public")); // Menyajikan folder public
+app.use('/api/v1/uploads', express.static('uploads')); // Menyajikan folder uploads secara statis
 
 app.get("/", (req, res) => {
   res.send(`
@@ -47,7 +48,7 @@ app.get("/", (req, res) => {
                     margin: 10px 0 0;
                 }
                 .button {
-                    margin-top: 100px; /* Increase margin-top to move the button down */
+                    margin-top: 100px;
                     padding: 10px 20px;
                     font-size: 16px;
                     color: #fff;
@@ -67,10 +68,6 @@ app.get("/", (req, res) => {
             <div class="container">
                 <h1>Hello World</h1>
                 <p>Welcome to my Express.js app!</p>
-                <p></p>
-                <p></p>
-                <p></p>
-                <p></p>
                 <a href="https://github.com" target="_blank" class="button">Visit My GitHub</a>
             </div>
         </body>
